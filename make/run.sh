@@ -2,7 +2,7 @@
 ##
 echo " Initialize "
 ##
-
+TIMER_CONF="$HOME/.timer_conf"
 ##############################################################
 
 #set environmente vars
@@ -12,6 +12,15 @@ PROJ="$HOME/timer_test/timer"
 # initialize vars
 
 caf_file="$PROJ/work/caf"
+
+if [ -f $TIMER_CONF ]; then
+  source $TIMER_CONF
+else
+  echo "missing configuration file $TIMER_CONF"  
+fi
+  
+
+##############################################################
 
 #create files and folder
 rm -rf work
