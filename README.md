@@ -3,7 +3,7 @@ Timer implemented in verilog
 
 Features:
 
-- 16 bit counter
+- 8 bit counter
 - Interruption generation
 
 
