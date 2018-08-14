@@ -1,0 +1,5 @@
+`define TIMER_CTRL_ADDR  8'h0
+`define TIMER_STATUS_ADDR 8'h1
+`define TIMER_CNT_ADDR 8'h2
+`define TIMER_CNT_MATCH_1_ADDR 8'h3
+`define TIMER_CNT_MATCH_2_ADDR 8'h4

@@ -5,25 +5,33 @@ module tb_counter();
   
   
   logic [5:0]  address;
-  logic [31:0] write_data;
-  logic [31:0] read_data;
+  logic [7:0] write_data;
+  logic [7:0] read_data;
   logic        module_en;
   logic        write_en;
-  logic 	   clk;
   logic        rst;
-  
+
+  // Simulator control  
   initial
   begin
     $dumpfile("dump.vcd"); $dumpvars;
-    address = 0;    
-    #1000;  
-    address = 10;    
+    $display("Starting simulation...");
+    #10000;
+    $finish;    
   end
   
-  count_registers count_registers (
+  //tasks
+  `include "../TESTBENCH/tasks/register_tasks.sv"
+
+
+  // clock 
+  wire        clk;
+  wire [11:0] clk_div;
+  
+  d_ip_timer d_ip_timer (
     
     .clk    (clk),
-    .rstn   (!rst),
+    .rst_b  (!rst),
     .addr   (address),
     .wr_en  (write_en),
     .mod_en (module_en),
@@ -31,6 +39,18 @@ module tb_counter();
     .wdata  (write_data)       
   
   );
+  
+  
+  testcase testcase ();
+  
+  clock_gen #(
+               .PERIOD (20)
+             )
+  clock_gen (
+               .out                    (clk)
+            );
+      
+  clock_div  clock_div (clk,clk_div);
   
   
 endmodule
