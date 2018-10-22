@@ -10,13 +10,20 @@ module tb_counter();
   logic        module_en;
   logic        write_en;
   logic        rst;
-
+  
+  logic        overflow_int;
+  logic        match0_int;  
+  logic        match1_int;
+  logic        timer_out;
+  logic        clk_ext;
+  logic        trigger;
+  
   // Simulator control  
   initial
   begin
     $dumpfile("dump.vcd"); $dumpvars;
     $display("Starting simulation...");
-    #10000;
+    #90000;
     $finish;    
   end
   
@@ -36,7 +43,13 @@ module tb_counter();
     .wr_en  (write_en),
     .mod_en (module_en),
     .rdata  (read_data),
-    .wdata  (write_data)       
+    .wdata  (write_data),
+    .overflow_int (overflow_int),
+    .comp_0_match_int (match0_int),
+    .comp_1_match_int (match1_int),
+    .timer_out (timer_out),
+    .trigger (trigger),
+    .clk_ext (clk_ext)    
   
   );
   

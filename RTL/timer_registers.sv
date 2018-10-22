@@ -3,120 +3,278 @@ module timer_registers(
            rst,
            module_en,
            wr,
+           
            logic [7:0]  wdata,
            logic [5:0]  addr,
            output  logic [7:0]  rdata,
-
-           //register control
            output logic overflow_int_en,
-           output logic out_match_1_int_en,
            output logic out_match_0_int_en,
+           output logic out_match_1_int_en,
            output logic clock_select,
-           output logic [2:0] operation_mode,
-           output logic start
-
-
+           output logic force_free,
+           output logic count_mode,
+           output logic [7:0] match_1_value,
+           output logic [7:0] match_0_value,
+           output logic start,
+           
+           
+           input  logic overflow,
+           input  logic match_0,
+           input  logic match_1,
+           
+           output logic overflow_status_flag,
+           output logic cnt_match_0_status_flag,
+           output logic cnt_match_1_status_flag,
+           
+           output logic [7:0] count_init,
+           output logic [7:0] count_min,
+           output logic [7:0] count_max,
+           
+           output logic       edge_mode,
+           output logic       pwm_mode
+           
+         
        );
-
-localparam CTRL_REG_RST  = 8'h0;
-localparam CNT_REG_RST   = 8'h0;
-localparam STATUS_REG_RST  = 8'h0;
+       
+localparam CTRL_REG_RST         = 8'h0;
+localparam CTRL_IN_REG_RST      = 8'h0;
+localparam CTRL_OUT_REG_RST     = 8'h0;
+localparam STATUS_REG_RST       = 8'h0;
+localparam CNT_INIT_REG_RST     = 8'h0;
+localparam CNT_MIN_REG_RST      = 8'h0;
+localparam CNT_MAX_REG_RST      = 8'hFF;
+localparam CNT_REG_RST          = 8'h0;
+localparam CNT_REG_MATCH_0_RST  = 8'h0;
 localparam CNT_REG_MATCH_1_RST  = 8'h0;
-localparam CNT_REG_MATCH_2_RST  = 8'h0;
 
+localparam CTRL_REG_ADDR        = 8'h0;
+localparam CTRL_IN_REG_ADDR     = 8'h1;
+localparam CTRL_OUT_REG_ADDR    = 8'h2;
+localparam STATUS_REG_ADDR      = 8'h4;
+localparam CNT_INIT_REG_ADDR    = 8'h8;
+localparam CNT_MIN_REG_ADDR     = 8'h9;
+localparam CNT_MAX_REG_ADDR     = 8'hA;
+localparam CNT_REG_ADDR         = 8'hB;
+localparam CNT_REG_MATCH_0_ADDR = 8'hC;
+localparam CNT_REG_MATCH_1_ADDR = 8'hD;
 
-localparam CTRL_REG_ADDR = 8'h0;
-localparam STATUS_REG_ADDR = 8'h1;
-localparam CNT_REG_ADDR  = 8'h2;
-localparam CNT_REG_MATCH_1_ADDR  = 8'h3;
-localparam CNT_REG_MATCH_2_ADDR = 8'h4;
-
-
-wire ctrl_reg_sel = (addr == CTRL_REG_ADDR);
-wire cnt_reg_sel = (addr == CNT_REG_ADDR);
-wire status_reg_sel = (addr == STATUS_REG_ADDR);
-wire cnt_match_1_sel = (addr == CNT_REG_MATCH_1_ADDR);
-wire cnt_match_2_sel = (addr == CNT_REG_MATCH_2_ADDR);
+wire ctrl_reg_sel     = (addr == CTRL_REG_ADDR);
+wire ctrl_in_reg_sel  = (addr == CTRL_IN_REG_ADDR);
+wire ctrl_out_reg_sel = (addr == CTRL_OUT_REG_ADDR);
+wire status_reg_sel   = (addr == STATUS_REG_ADDR);
+wire cnt_init_reg_sel = (addr == CNT_INIT_REG_ADDR);
+wire cnt_min_reg_sel  = (addr == CNT_MIN_REG_ADDR);
+wire cnt_max_reg_sel  = (addr == CNT_MAX_REG_ADDR);
+wire cnt_reg_sel      = (addr == CNT_REG_ADDR);
+wire cnt_match_1_sel  = (addr == CNT_REG_MATCH_1_ADDR);
+wire cnt_match_0_sel  = (addr == CNT_REG_MATCH_0_ADDR);
 
 wire         wr_en;
 wire         rd_en;
 logic [7:0]  rdata_mux_out;
 
-
 assign wr_en = module_en &  wr;
 assign rd_en = module_en & ~wr;
 
-
+//register ctrl
 logic [7:0] ctrl_reg;
-
 assign ctrl_reg = {
-           start,
-           operation_mode,
-           clock_select,
-           out_match_0_int_en,
-           out_match_1_int_en,
+           force_free,
            overflow_int_en,
-           1'b0
+           out_match_1_int_en,
+           out_match_0_int_en,
+           1'b0,
+           clock_select,
+           1'b0,
+           count_mode,
+           start
+       };
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        start = CTRL_REG_RST[0];
+    else
+        if (wr_en & ctrl_reg_sel)
+            start = wdata[0];
+end
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        count_mode = CTRL_REG_RST[1];
+    else
+        if (wr_en & ctrl_reg_sel)
+            count_mode = wdata[1];
+end
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        clock_select = CTRL_REG_RST[3];
+    else
+        if (wr_en & ctrl_reg_sel)
+            clock_select = wdata[3];
+end
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        overflow_int_en = CTRL_REG_RST[4];
+    else
+        if (wr_en & ctrl_reg_sel)
+            overflow_int_en = wdata[4];
+end
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        out_match_0_int_en = CTRL_REG_RST[5];
+    else
+        if (wr_en & ctrl_reg_sel)
+            out_match_0_int_en = wdata[5];
+end
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        out_match_1_int_en = CTRL_REG_RST[6];
+    else
+        if (wr_en & ctrl_reg_sel)
+            out_match_1_int_en = wdata[6];
+end
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        force_free = CTRL_REG_RST[7];
+    else
+        if (wr_en & ctrl_reg_sel)
+            force_free = wdata[7];
+end
+
+
+
+
+//register ctrl_in
+
+logic [7:0] ctrl_in_reg;
+
+
+assign ctrl_in_reg = {
+           7'b0,
+           edge_mode
        };
 
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        edge_mode = CTRL_REG_RST[0];
+    else
+        if (wr_en & ctrl_in_reg_sel)
+            edge_mode = wdata[0];
+end
+
+//register ctrl_out
+
+logic [7:0] ctrl_out_reg;
+
+
+assign ctrl_out_reg = {
+           7'b0,
+           pwm_mode
+       };
 
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        start = CTRL_REG_RST[7];
+        pwm_mode = CTRL_REG_RST[0];
     else
-        if (wr_en & ctrl_reg_sel)
-            start = wdata[7];
+        if (wr_en & ctrl_in_reg_sel)
+            pwm_mode = wdata[0];
+end
+
+//register status
+ 
+logic [7:0] status_reg;
+
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        overflow_status_flag = 0;
+    else
+        if (overflow)
+            overflow_status_flag = 1;
+        else if (wr_en & status_reg_sel & wdata[0])
+            overflow_status_flag = 0;
+           
 end
 
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        operation_mode = CTRL_REG_RST[6:5];
+        cnt_match_0_status_flag = 0;
     else
-        if (wr_en & ctrl_reg_sel)
-            operation_mode = wdata[6:5];
+        if (match_0 & start)
+            cnt_match_0_status_flag = 1;
+        else if (wr_en & status_reg_sel & wdata[1])
+            cnt_match_0_status_flag = 0;
+    
 end
 
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        clock_select = CTRL_REG_RST[4];
+        cnt_match_1_status_flag = 0;
     else
-        if (wr_en & ctrl_reg_sel)
-            clock_select = wdata[4];
+        if (match_1 & start)
+            cnt_match_1_status_flag = 1;
+        else if (wr_en & status_reg_sel & wdata[2])
+            cnt_match_1_status_flag = 0;
+            
 end
+
+assign status_reg = {5'b0,cnt_match_1_status_flag,cnt_match_0_status_flag,overflow_status_flag};
+
+//register count_init
 
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        out_match_0_int_en = CTRL_REG_RST[3];
+        count_init = CNT_INIT_REG_RST;
     else
-        if (wr_en & ctrl_reg_sel)
-            out_match_0_int_en = wdata[3];
+        if (wr_en & cnt_init_reg_sel)
+            count_init = wdata;
 end
+
+//register count_min
 
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        out_match_1_int_en = CTRL_REG_RST[2];
+        count_min = CNT_MIN_REG_RST;
     else
-        if (wr_en & ctrl_reg_sel)
-            out_match_1_int_en = wdata[2];
+        if (wr_en & cnt_min_reg_sel)
+            count_min = wdata;
 end
+
+//register count_max
 
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        overflow_int_en = CTRL_REG_RST[1];
+        count_max = CNT_MAX_REG_RST;
     else
-        if (wr_en & ctrl_reg_sel)
-            overflow_int_en = wdata[1];
+        if (wr_en & cnt_max_reg_sel)
+            count_max = wdata;
 end
+
 
 //register count
+
 logic [7:0] counter;
 logic [7:0] counter_reg;
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        counter = CNT_REG_RST;
+    else
+        if (wr_en & cnt_reg_sel)
+            counter = wdata;
+end
 
 always @(posedge clk or posedge rst)
 begin
@@ -125,76 +283,53 @@ begin
     else
         if (wr_en & cnt_reg_sel)
             counter = wdata;
-
 end
+
 
 assign counter_reg = counter;
 
-//register status
 
-logic [7:0] status;
-logic [7:0] status_reg;
-
+//register output match_0 value
+logic [7:0] cnt_match_0_reg;
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        status = STATUS_REG_RST;
+        match_0_value = CNT_REG_MATCH_0_RST;
     else
-        if (wr_en & status_reg_sel)
-            status = wdata;
-
+        if (wr_en & cnt_match_0_sel)
+            match_0_value = wdata;
 end
-
-assign status_reg = status;
-
-
+assign cnt_match_0_reg = match_0_value;
 //register output match_1 value
-logic [7:0] cnt_match_1;
 logic [7:0] cnt_match_1_reg;
-
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        cnt_match_1 = CNT_REG_MATCH_1_RST;
+        match_1_value = CNT_REG_MATCH_1_RST;
     else
         if (wr_en & cnt_match_1_sel)
-            cnt_match_1 = wdata;
+            match_1_value = wdata;
 end
-
-assign cnt_match_1_reg = cnt_match_1;
-
-//register output match_2 value
-logic [7:0] cnt_match_2;
-logic [7:0] cnt_match_2_reg;
-
-always @(posedge clk or posedge rst)
-begin
-    if (rst)
-        cnt_match_2 = CNT_REG_MATCH_2_RST;
-    else
-        if (wr_en & cnt_match_2_sel)
-            cnt_match_2 = wdata;
-
-end
-
-assign cnt_match_2_reg = cnt_match_2;
-
+assign cnt_match_1_reg = match_1_value;
 
 //read register
-
 always @ (*)
 begin : MUX
     case(addr )
         CTRL_REG_ADDR : rdata_mux_out = ctrl_reg;
-        CNT_REG_ADDR : rdata_mux_out = counter_reg;
+        CTRL_IN_REG_ADDR : rdata_mux_out = ctrl_in_reg;
+        CTRL_OUT_REG_ADDR : rdata_mux_out = ctrl_out_reg;
         STATUS_REG_ADDR : rdata_mux_out = status_reg;
+        CNT_REG_ADDR : rdata_mux_out = counter_reg;
+        CNT_INIT_REG_ADDR : rdata_mux_out = count_init;
+        CNT_MIN_REG_ADDR : rdata_mux_out = count_min;
+        CNT_MAX_REG_ADDR : rdata_mux_out = count_max;
         CNT_REG_MATCH_1_ADDR : rdata_mux_out = cnt_match_1_reg;
-        CNT_REG_MATCH_2_ADDR : rdata_mux_out = cnt_match_2_reg;
+        CNT_REG_MATCH_0_ADDR : rdata_mux_out = cnt_match_0_reg;
         default: rdata_mux_out = 8'b0;
     endcase
 end
-
-
 assign rdata = rdata_mux_out & {8{rd_en}};
+
 
 endmodule

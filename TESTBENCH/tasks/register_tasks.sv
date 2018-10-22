@@ -26,7 +26,7 @@ begin
 `TB_SCOPE.module_en  = 1'b1;
 `TB_SCOPE.write_en   = 1'b0;
  #1
-  $display("[%m ] : Read A=h%02h R=h%02h T=%0d",address,reg_read_data,$stime);
+  $display("[%m ] : Read  A=h%02h R=h%02h T=%0d",address,reg_read_data,$stime);
 @(posedge `TB_SCOPE.clk);
 `TB_SCOPE.address    = 8'b0;
 `TB_SCOPE.module_en  = 1'b0;

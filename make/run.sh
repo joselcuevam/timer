@@ -23,7 +23,7 @@ fi
 ##############################################################
 
 #create files and folder
-rm -rf work
+#rm -rf work
 mkdir -p $PROJ/work
 cd $PROJ/work
 
@@ -55,13 +55,20 @@ case $1 in
   ;;
 "-r")
     echo "run simulation"
-    eval irun -access +rw -f $caf_file -input ../tool_data/simvision/run.tcl
+    comando="irun -access +rw -f $caf_file -top tb_counter -input ../tool_data/simvision/run.tcl "
+    echo $comando
+    eval $comando
   ;; 
 "-w")
     echo "open simulation waveform"
-    eval simvision $PROJ/work/timer.shm -input $PROJ/tool_data/simvision/simvision.svcf
+    comando="simvision $PROJ/work/timer.shm -input $PROJ/tool_data/simvision/simvision.svcf"
+    echo $comando
+    eval $comando
   ;; 
-
+"-n")
+    echo "open files"
+    nedit $PROJ/RTL/* $PROJ/TESTBENCH/*.sv $PROJ/TESTBENCH/*/*.sv $PROJ/make/run.sh
+  ;;
 *)
   Message="Command not found"
   ;;
