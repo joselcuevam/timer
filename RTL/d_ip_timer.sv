@@ -57,12 +57,14 @@ logic edge_mode;
   //decode
   assign  up_count   = ~count_mode;
   assign  down_count =  count_mode;  
+  assign  ext_clock_select = clock_select;
   
   //edge detector
   always @ (posedge clk) begin
     start_1 <= start;
   end  
   assign start_rise = start & ~start_1;
+
   
   timer_registers timer_registers(
   .clk (clk),
@@ -99,7 +101,7 @@ logic edge_mode;
   )                                            
   timer_counter(                               
     .clk(clk),
-    .clk_pulse(clk_pulse),
+    .clk_pulse(clk_pulse & ext_clock_select| ~ext_clock_select),
     .rst(~rst_b),
     .up (up_count ),
     .down ( down_count ),                             

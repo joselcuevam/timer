@@ -65,5 +65,11 @@ module tb_counter();
       
   clock_div  clock_div (clk,clk_div);
   
+  clock_gen #(
+               .PERIOD (100)
+             )
+  clock_gen_ext (
+               .out                    (clk_ext)
+            );
   
 endmodule
