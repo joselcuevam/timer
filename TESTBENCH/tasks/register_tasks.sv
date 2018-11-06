@@ -1,7 +1,3 @@
-logic [7:0] reg_read_data;
-
-assign reg_read_data = `TB_SCOPE.read_data;
-
 
 task reg_write(reg [7:0] address,reg [7:0] data);
 begin
@@ -26,10 +22,19 @@ begin
 `TB_SCOPE.module_en  = 1'b1;
 `TB_SCOPE.write_en   = 1'b0;
  #1
-  $display("[%m ] : Read  A=h%02h R=h%02h T=%0d",address,reg_read_data,$stime);
+  $display("[%m ] : Read  A=h%02h R=h%02h T=%0d",address,`TB_SCOPE.reg_read_data,$stime);
 @(posedge `TB_SCOPE.clk);
 `TB_SCOPE.address    = 8'b0;
 `TB_SCOPE.module_en  = 1'b0;
 `TB_SCOPE.write_en   = 1'b0;
+end
+endtask
+
+
+task delay(reg [31:0] value);
+begin
+  `SHOWM_VALUE (Wait clock cycles,value);
+  repeat (value) @(posedge `TB_SCOPE.clk);
+  `SHOWM (Wait clock cycles end);
 end
 endtask

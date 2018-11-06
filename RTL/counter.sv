@@ -3,18 +3,25 @@ module timer_counter
           parameter COUNTER_SIZE  = 8    // counter size
         )(
            input   logic                     clk,
-                                             clk_pulse,
+                                             en,
                                              rst,
-                                             up,
-                                             down,
+                                             cnt_mode,
                                              free,
                                              init_cnt,
            input   logic [COUNTER_SIZE-1:0]  min,
            input   logic [COUNTER_SIZE-1:0]  max,
            input   logic [COUNTER_SIZE-1:0]  init,                      
            output  logic [COUNTER_SIZE-1:0]  value,
-                   logic                     overflow
+                   logic                     overflow_set
        );
+
+logic overflow_up;
+logic overflow_dwn;
+logic up,down,down_p;
+
+assign up   = cnt_mode ==1;
+assign down = cnt_mode ==0;
+
 
 always @(posedge clk or posedge rst)
 begin
@@ -24,7 +31,7 @@ begin
       value = init;
   else
   begin
-    if (clk_pulse)
+    if (en)
     begin
        if ( (up|free) & ~down )
        begin
@@ -60,6 +67,13 @@ begin
   end      
 end
 
-assign overflow = (value == {COUNTER_SIZE{1'b1}});
+// as max/min value reached and enabled 
+// next cycle count restarts
+// overflow set
+
+assign overflow_up_set  = (value == {COUNTER_SIZE{1'b1}}) & en;
+assign overflow_dwn_set = (value == {COUNTER_SIZE{1'b0}}) & en;
+
+assign overflow_set =  cnt_mode?overflow_up_set:overflow_dwn_set;
 
 endmodule

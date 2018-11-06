@@ -5,8 +5,8 @@ module tb_counter();
   
   
   logic [5:0]  address;
-  logic [7:0] write_data;
-  logic [7:0] read_data;
+  logic [7:0]  write_data;
+  logic [7:0]  read_data;
   logic        module_en;
   logic        write_en;
   logic        rst;
@@ -29,11 +29,42 @@ module tb_counter();
   
   //tasks
   `include "../TESTBENCH/tasks/register_tasks.sv"
+  `include "../TESTBENCH/tasks/common_tasks.sv"
+  
+  logic [7:0] reg_read_data;
 
+  assign reg_read_data = `TB_SCOPE.read_data;
 
   // clock 
+  
   wire        clk;
   wire [11:0] clk_div;
+
+  testcase testcase ();
+  
+  clock_gen #( .PERIOD (20)  )
+  clock_gen (  .out (clk)    );
+      
+  clock_div  clock_div (clk,clk_div);
+  
+  clock_gen #( .PERIOD (200) )
+  clock_gen_ext ( .out (clk_ext) );
+
+  // pulses
+  reg [15:0] random_val;
+  reg        pulses;
+  
+  initial
+  begin
+    pulses =0; 
+    while (1)
+    begin
+      random_val=$urandom%100;
+      repeat(random_val + 20) begin @ (posedge clk);  end
+      pulses = ~pulses;
+    end  
+  end
+
   
   d_ip_timer d_ip_timer (
     
@@ -48,28 +79,9 @@ module tb_counter();
     .comp_0_match_int (match0_int),
     .comp_1_match_int (match1_int),
     .timer_out (timer_out),
-    .trigger (trigger),
-    .clk_ext (clk_ext)    
+    .timer_in (pulses)  
   
   );
   
-  
-  testcase testcase ();
-  
-  clock_gen #(
-               .PERIOD (20)
-             )
-  clock_gen (
-               .out                    (clk)
-            );
-      
-  clock_div  clock_div (clk,clk_div);
-  
-  clock_gen #(
-               .PERIOD (100)
-             )
-  clock_gen_ext (
-               .out                    (clk_ext)
-            );
   
 endmodule

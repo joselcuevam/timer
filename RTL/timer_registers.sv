@@ -15,8 +15,8 @@ module timer_registers(
            output logic count_mode,
            output logic [7:0] match_1_value,
            output logic [7:0] match_0_value,
-           output logic start,
-           
+           output logic       start,
+           output logic [2:0] prescaler,
            
            input  logic overflow,
            input  logic match_0,
@@ -31,8 +31,9 @@ module timer_registers(
            output logic [7:0] count_max,
            
            output logic       edge_mode,
-           output logic       pwm_mode
-           
+           output logic       pwm_mode,
+           output logic       cnt_init_wr,
+           output logic       inv         
          
        );
        
@@ -83,7 +84,6 @@ assign ctrl_reg = {
            overflow_int_en,
            out_match_1_int_en,
            out_match_0_int_en,
-           1'b0,
            clock_select,
            1'b0,
            count_mode,
@@ -155,7 +155,9 @@ logic [7:0] ctrl_in_reg;
 
 
 assign ctrl_in_reg = {
-           7'b0,
+           1'b0,
+           prescaler,
+           3'b0,
            edge_mode
        };
 
@@ -168,13 +170,24 @@ begin
             edge_mode = wdata[0];
 end
 
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        prescaler = CTRL_REG_RST[6:4];
+    else
+        if (wr_en & ctrl_in_reg_sel)
+            prescaler = wdata[6:4];
+end
+
+
 //register ctrl_out
 
 logic [7:0] ctrl_out_reg;
 
 
 assign ctrl_out_reg = {
-           7'b0,
+           6'b0,
+           inv,
            pwm_mode
        };
 
@@ -183,10 +196,17 @@ begin
     if (rst)
         pwm_mode = CTRL_REG_RST[0];
     else
-        if (wr_en & ctrl_in_reg_sel)
+        if (wr_en & ctrl_out_reg_sel)
             pwm_mode = wdata[0];
 end
-
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        inv = CTRL_REG_RST[1];
+    else
+        if (wr_en & ctrl_out_reg_sel)
+            inv = wdata[1];
+end
 //register status
  
 logic [7:0] status_reg;
@@ -227,6 +247,8 @@ begin
             
 end
 
+
+
 assign status_reg = {5'b0,cnt_match_1_status_flag,cnt_match_0_status_flag,overflow_status_flag};
 
 //register count_init
@@ -237,8 +259,20 @@ begin
         count_init = CNT_INIT_REG_RST;
     else
         if (wr_en & cnt_init_reg_sel)
-            count_init = wdata;
+           count_init = wdata;
 end
+
+
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+       cnt_init_wr =0;
+    else if  (wr_en & cnt_init_reg_sel)
+      cnt_init_wr = 1;
+    else
+      cnt_init_wr = 0;
+end
+
 
 //register count_min
 

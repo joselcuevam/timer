@@ -23,14 +23,17 @@ reg_read(`TIMER_CNT_MATCH_1_ADDR);
 `SHOWM(Write to count match 2 register);
 reg_write(`TIMER_CNT_MATCH_2_ADDR,8'h10);
 reg_read(`TIMER_CNT_MATCH_2_ADDR);
-`SHOWM(Write to control register);
+`SHOWM(Write to control in register);
 reg_write(`TIMER_CTRL_IN_ADDR,8'h01);
 reg_read(`TIMER_CTRL_IN_ADDR);
-`SHOWM(Write to control register);
-reg_write(`TIMER_CTRL_OUT_ADDR,8'h01);
+`SHOWM(Write to control out register);
+//reg_write(`TIMER_CTRL_OUT_ADDR,8'h01);
+reg_write(`TIMER_CTRL_OUT_ADDR,8'h03);
 reg_read(`TIMER_CTRL_OUT_ADDR);
 `SHOWM(Write to control register);
-reg_write(`TIMER_CTRL_ADDR,8'h01);
+//reg_write(`TIMER_CTRL_ADDR,8'h01);
+reg_write(`TIMER_CTRL_ADDR,8'h09);
+
 reg_read(`TIMER_CTRL_ADDR);
 #30000;
 

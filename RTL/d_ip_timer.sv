@@ -5,8 +5,7 @@ module d_ip_timer(
   input  [5:0] addr,
   input  wr_en,
   input  mod_en,
-  input  clk_ext,
-  input  trigger,
+  input  timer_in,
   input  [7:0] wdata,
   output [7:0] rdata,
   output timer_out,
@@ -53,10 +52,11 @@ logic free_mode;
 logic clk_pulse;
 logic pwm_mode;
 logic edge_mode;
+logic inv;
+logic enable_operation;
+logic [2:0] prescaler;
 
   //decode
-  assign  up_count   = ~count_mode;
-  assign  down_count =  count_mode;  
   assign  ext_clock_select = clock_select;
   
   //edge detector
@@ -65,6 +65,8 @@ logic edge_mode;
   end  
   assign start_rise = start & ~start_1;
 
+
+  assign enable_operation = clk_pulse & ext_clock_select & start| ~ext_clock_select & start;
   
   timer_registers timer_registers(
   .clk (clk),
@@ -91,8 +93,11 @@ logic edge_mode;
   .match_0(cnt_match_0_status_flag_set),
   .match_1(cnt_match_1_status_flag_set),     
   .start(start),
+  .inv(inv),
+  .prescaler(prescaler),
   .pwm_mode(pwm_mode),
   .edge_mode(edge_mode),
+  .cnt_init_wr(cnt_init_wr),
   .rdata (rdata)
   );
   
@@ -101,17 +106,16 @@ logic edge_mode;
   )                                            
   timer_counter(                               
     .clk(clk),
-    .clk_pulse(clk_pulse & ext_clock_select| ~ext_clock_select),
+    .en(enable_operation),
     .rst(~rst_b),
-    .up (up_count ),
-    .down ( down_count ),                             
+    .cnt_mode ( ~count_mode ),                             
     .value(counter_value),
     .min (count_min),
     .max (count_max),
     .init (count_init),
     .free (free_mode),
-    .init_cnt(start_rise),
-    .overflow(counter_overflow)                     
+    .init_cnt(cnt_init_wr),
+    .overflow_set(counter_overflow)                     
   );
   
   assign overflow_int = overflow_int_en && overflow_status_flag;
@@ -119,11 +123,11 @@ logic edge_mode;
   input_block  input_block (
   
   .clk       (clk),
-  .clk_ext   (clk_ext),
-  .trigger   (trigger),
+  .clk_ext   (timer_in),
   .rst       (~rst_b),
   .edge_mode (edge_mode),  
-  .clk_pulse (clk_pulse)
+  .clk_pulse (clk_pulse),
+  .ps        (prescaler)
       
   );
 
@@ -136,15 +140,18 @@ logic edge_mode;
   .counter_value (counter_value),
   .pwm_mode      (pwm_mode),
   .timer_out     (timer_out),
-  .match_value   ({ match_0_value,
-                    match_1_value  }),
-  .flag          ({ cnt_match_0_status_flag_set,
-                    cnt_match_1_status_flag_set}),
-  .intr_en       ({ out_match_0_int_en,
-                    out_match_1_int_en }),
-  .intr          ({ comp_0_match_int,
-                    comp_1_match_int   })
-
+  .match_value   ({ match_1_value,
+                    match_0_value  }),
+  .match         ({ cnt_match_1_status_flag_set,
+                    cnt_match_0_status_flag_set}),
+  .flag          ({ cnt_match_1_status_flag,
+                    cnt_match_0_status_flag}),
+  .intr_en       ({ out_match_1_int_en,
+                    out_match_0_int_en }),
+  .intr          ({ comp_1_match_int,
+                    comp_0_match_int   }),
+  .inv           (inv),
+  .en            (enable_operation)
   );
 
    
