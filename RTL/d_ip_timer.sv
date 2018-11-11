@@ -9,6 +9,7 @@ module d_ip_timer(
   input  [7:0] wdata,
   output [7:0] rdata,
   output timer_out,
+  output trigger,
   output overflow_int,
          comp_1_match_int,
          comp_0_match_int
@@ -19,6 +20,9 @@ localparam CNTR_ADDR=6'h04;
 localparam COUNTER_SIZE=8;
 localparam NUM_COMP=2;
 
+logic                     overflow_trg_en;
+logic                     out_match_1_trg_en;
+logic                     out_match_0_trg_en;
 logic                     overflow_int_en;
 logic                     out_match_1_int_en;
 logic                     out_match_0_int_en;
@@ -53,6 +57,7 @@ logic clk_pulse;
 logic pwm_mode;
 logic edge_mode;
 logic inv;
+logic trigger_int;
 logic enable_operation;
 logic [2:0] prescaler;
 
@@ -77,7 +82,10 @@ logic [2:0] prescaler;
   .addr (addr),
   .overflow_int_en(overflow_int_en),
   .out_match_1_int_en(out_match_1_int_en),
-  .out_match_0_int_en(out_match_0_int_en),
+  .out_match_0_int_en(out_match_0_int_en),  
+  .overflow_trg_en(overflow_trg_en),
+  .out_match_1_trg_en(out_match_1_trg_en),
+  .out_match_0_trg_en(out_match_0_trg_en),
   .clock_select(clock_select),
   .count_mode(count_mode),
   .force_free (free_mode),
@@ -148,12 +156,15 @@ logic [2:0] prescaler;
                     cnt_match_0_status_flag}),
   .intr_en       ({ out_match_1_int_en,
                     out_match_0_int_en }),
+  .trg_en        ({ out_match_1_trg_en,
+                    out_match_0_trg_en   }),
   .intr          ({ comp_1_match_int,
                     comp_0_match_int   }),
   .inv           (inv),
-  .en            (enable_operation)
+  .en            (enable_operation),
+  .trigger       (trigger_int)
   );
 
-   
+  assign trigger = trigger_int | (counter_overflow & overflow_trg_en);
 
 endmodule

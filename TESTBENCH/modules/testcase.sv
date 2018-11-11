@@ -17,9 +17,11 @@ startup_task();
 //`include "../TESTBENCH/vectorset/up_count_mode_pwm.sv"
 //`include "../TESTBENCH/vectorset/up_count_match_int.sv"
 //`include "../TESTBENCH/vectorset/up_count_overflow_int.sv"
+//`include "../TESTBENCH/vectorset/input_ext_clk_prescaler.sv"
+//`include "../TESTBENCH/vectorset/down_count_mode_trigger.sv"
+//`include "../TESTBENCH/vectorset/free_run_trigger.sv"
 
-`include "../TESTBENCH/vectorset/input_ext_clk_prescaler.sv"
-
+`include "../TESTBENCH/vectorset/test.sv"
 
 `SHOWM(===========================);
 `SHOWM(End simulation);

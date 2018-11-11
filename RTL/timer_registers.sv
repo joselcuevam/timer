@@ -17,6 +17,10 @@ module timer_registers(
            output logic [7:0] match_0_value,
            output logic       start,
            output logic [2:0] prescaler,
+
+           output logic overflow_trg_en,
+           output logic out_match_1_trg_en,
+           output logic out_match_0_trg_en,                   
            
            input  logic overflow,
            input  logic match_0,
@@ -164,7 +168,7 @@ assign ctrl_in_reg = {
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        edge_mode = CTRL_REG_RST[0];
+        edge_mode = CTRL_IN_REG_RST[0];
     else
         if (wr_en & ctrl_in_reg_sel)
             edge_mode = wdata[0];
@@ -173,7 +177,7 @@ end
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        prescaler = CTRL_REG_RST[6:4];
+        prescaler = CTRL_IN_REG_RST[6:4];
     else
         if (wr_en & ctrl_in_reg_sel)
             prescaler = wdata[6:4];
@@ -186,7 +190,11 @@ logic [7:0] ctrl_out_reg;
 
 
 assign ctrl_out_reg = {
-           6'b0,
+           1'b0,
+           out_match_1_trg_en,
+           out_match_0_trg_en,
+           overflow_trg_en,
+           2'b0,
            inv,
            pwm_mode
        };
@@ -194,7 +202,7 @@ assign ctrl_out_reg = {
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        pwm_mode = CTRL_REG_RST[0];
+        pwm_mode = CTRL_OUT_REG_RST[0];
     else
         if (wr_en & ctrl_out_reg_sel)
             pwm_mode = wdata[0];
@@ -202,11 +210,37 @@ end
 always @(posedge clk or posedge rst)
 begin
     if (rst)
-        inv = CTRL_REG_RST[1];
+        inv = CTRL_OUT_REG_RST[1];
     else
         if (wr_en & ctrl_out_reg_sel)
             inv = wdata[1];
 end
+
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        overflow_trg_en = CTRL_OUT_REG_RST[4];
+    else
+        if (wr_en & ctrl_out_reg_sel)
+            overflow_trg_en = wdata[4];
+end
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        out_match_0_trg_en = CTRL_OUT_REG_RST[5];
+    else
+        if (wr_en & ctrl_out_reg_sel)
+            out_match_0_trg_en = wdata[5];
+end
+always @(posedge clk or posedge rst)
+begin
+    if (rst)
+        out_match_1_trg_en = CTRL_OUT_REG_RST[6];
+    else
+        if (wr_en & ctrl_out_reg_sel)
+            out_match_1_trg_en = wdata[6];
+end
+
 //register status
  
 logic [7:0] status_reg;

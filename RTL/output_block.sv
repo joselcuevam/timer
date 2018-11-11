@@ -9,12 +9,13 @@ input  logic rst,
        logic [NUM_COMP-1:0] [7:0] match_value,
        logic [7:0] counter_value,
        logic [NUM_COMP-1:0] intr_en,
+       logic [NUM_COMP-1:0] trg_en,
        logic [NUM_COMP-1:0] flag,        
        logic pwm_mode,
        logic inv,
 
-
 output logic timer_out,
+       logic trigger,
        logic [NUM_COMP-1:0] intr,      
        logic [NUM_COMP-1:0] match
        
@@ -26,6 +27,9 @@ output logic timer_out,
   logic low_pwm;
   logic [NUM_COMP-1:0] match_past;
   logic [NUM_COMP-1:0] match_rise;
+  logic [NUM_COMP-1:0] trigger_internal;
+  
+  assign trigger = |trigger_internal;
   
   genvar a;
   
@@ -35,6 +39,10 @@ output logic timer_out,
     assign match_rise[a] = (~match_past[a] & match[a]);
   end
 
+  for (a = 0;a < NUM_COMP; a=a+1 )
+  begin
+    assign trigger_internal[a] = (match[a] & trg_en[a]);
+  end 
 
   always @ (posedge clk or posedge rst)
   begin

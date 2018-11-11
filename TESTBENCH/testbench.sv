@@ -79,8 +79,8 @@ module tb_counter();
     .comp_0_match_int (match0_int),
     .comp_1_match_int (match1_int),
     .timer_out (timer_out),
-    .timer_in (pulses)  
-  
+    //.timer_in (pulses)  
+    .timer_in (clk_ext) 
   );
   
   

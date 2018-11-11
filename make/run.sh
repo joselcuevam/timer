@@ -12,6 +12,7 @@ PROJ="$HOME/timer_test/timer"
 # initialize vars
 
 caf_file="$PROJ/work/caf"
+stim_name="free_run"
 
 if [ -f $TIMER_CONF ]; then
   source $TIMER_CONF
@@ -54,6 +55,10 @@ case $1 in
     echo ""
   ;;
 "-r")
+    stim_name=$2
+    echo "stimulus name: $stim_name"
+    unlink $PROJ/TESTBENCH/vectorset/test.sv
+    ln -s $PROJ/TESTBENCH/vectorset/$stim_name".sv" $PROJ/TESTBENCH/vectorset/test.sv
     echo "run simulation"
     comando="irun -access +rw -f $caf_file -top tb_counter -input ../tool_data/simvision/run.tcl "
     echo $comando
@@ -85,6 +90,7 @@ echo $Message
 
 for var in "$@"
 do
- action $var
+ action $var $2
+ 
 done
 

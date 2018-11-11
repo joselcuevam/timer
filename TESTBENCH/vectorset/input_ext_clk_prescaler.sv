@@ -1,4 +1,4 @@
-`SHOWM(DOWN counter mode);
+`SHOWM(Input external clock prescaler);
 
 reg_read(`TIMER_CTRL_ADDR);
 reg_write(`TIMER_CTRL_IN_ADDR,8'h30);
