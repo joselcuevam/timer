@@ -3,7 +3,7 @@
 
 Features:
 
-- 8 bit counter
+- 8 bit bidirectional counter
 - Interruption generation
 - Trigger generation
 - PWM generation
