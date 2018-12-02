@@ -8,10 +8,13 @@ TIMER_CONF="$HOME/.timer_conf"
 #set environmente vars
 
 PROJ="$HOME/timer_test/timer"
+VVP_LIB="$HOME/apps/lib/ivl"
 
 # initialize vars
 
 caf_file="$PROJ/work/caf"
+caf_file_iverilog="$PROJ/work/caf_iverilog"
+
 stim_name="free_run"
 
 if [ -f $TIMER_CONF ]; then
@@ -44,7 +47,7 @@ case $1 in
     echo ""
     echo "caf:$caf_file"
     echo "..remove caf"
-    rm   $caf_file -rf
+    rm   $caf_file $caf_file_iverilog -rf
     echo "..goto work folder"
     cd   $PROJ
     echo "..get rtl & testbench files"
@@ -52,7 +55,10 @@ case $1 in
     cd   -
     echo "caf file content:"
     cat  $caf_file
+    echo "+incdir+$PROJ/TESTBENCH/tasks" > $caf_file_iverilog
+    cat $caf_file >> $caf_file_iverilog
     echo ""
+    
   ;;
 "-r")
     stim_name=$2
@@ -63,7 +69,18 @@ case $1 in
     comando="irun -access +rw -incdir $PROJ/TESTBENCH/tasks -f $caf_file -top tb_counter -input ../tool_data/simvision/run.tcl "
     echo $comando
     eval $comando
-  ;; 
+  ;;
+"-ri")
+    stim_name=$2
+    echo "stimulus name: $stim_name"
+    unlink $PROJ/TESTBENCH/vectorset/test.sv
+    ln -s $PROJ/TESTBENCH/vectorset/$stim_name".sv" $PROJ/TESTBENCH/vectorset/test.sv
+    echo "run simulation"
+    comando="iverilog -c $caf_file_iverilog -o timer.vvp;vvp -M $VVP_LIB timer.vvp"
+    echo $comando
+    eval $comando
+  ;;   
+   
 "-w")
     echo "open simulation waveform"
     comando="simvision $PROJ/work/timer.shm -input $PROJ/tool_data/simvision/simvision.svcf"
