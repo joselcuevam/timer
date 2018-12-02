@@ -1,24 +1,24 @@
 module input_block(
 
-input logic        clk_ext,
-      logic        clk,
-      logic        rst,
-input logic [2:0]  ps,       
-      logic        edge_mode,
+input         clk_ext,
+              clk,
+              rst,
+input  [2:0]  ps,       
+input         edge_mode,
 
 
-output logic       clk_pulse
+output        clk_pulse
 
 );
 
-logic [7:0] clk_ext_past;
-logic       pos_edge;
-logic       neg_edge;
+reg [7:0] clk_ext_past;
+wire        pos_edge;
+wire        neg_edge;
 
-logic [6:0] ps_counter;
-logic       in_pulse;
-logic       clk_ps;
-logic       clk_ps_past;
+reg   [6:0] ps_counter;
+wire        in_pulse;
+wire        clk_ps;
+reg         clk_ps_past;
 
 
 //Input edge detector

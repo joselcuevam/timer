@@ -3,31 +3,31 @@ module output_block
     parameter NUM_COMP  = 3
 )
 (
-input  logic rst,
-       logic clk,
-       logic en,
-       logic [NUM_COMP-1:0] [7:0] match_value,
-       logic [7:0] counter_value,
-       logic [NUM_COMP-1:0] intr_en,
-       logic [NUM_COMP-1:0] trg_en,
-       logic [NUM_COMP-1:0] flag,        
-       logic pwm_mode,
-       logic inv,
+input        rst,
+input        clk,
+input        en,
+input       [NUM_COMP-1:0] [7:0] match_value,
+input       [7:0] counter_value,
+input       [NUM_COMP-1:0] intr_en,
+input       [NUM_COMP-1:0] trg_en,
+input       [NUM_COMP-1:0] flag,        
+input        pwm_mode,
+        inv,
 
-output logic timer_out,
-       logic trigger,
-       logic [NUM_COMP-1:0] intr,      
-       logic [NUM_COMP-1:0] match
+output  timer_out,
+        trigger,
+output        [NUM_COMP-1:0] intr,      
+output        [NUM_COMP-1:0] match
        
 );
 
-  logic timer_out_internal;
+  reg timer_out_internal;
   
-  logic high_pwm;
-  logic low_pwm;
-  logic [NUM_COMP-1:0] match_past;
-  logic [NUM_COMP-1:0] match_rise;
-  logic [NUM_COMP-1:0] trigger_internal;
+  wire high_pwm;
+  wire low_pwm;
+  reg [NUM_COMP-1:0] match_past;
+  wire [NUM_COMP-1:0] match_rise;
+  wire [NUM_COMP-1:0] trigger_internal;
   
   assign trigger = |trigger_internal;
   

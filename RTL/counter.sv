@@ -2,22 +2,24 @@ module timer_counter
       #(
           parameter COUNTER_SIZE  = 8    // counter size
         )(
-           input   logic                     clk,
+           input                             clk,
                                              en,
                                              rst,
                                              cnt_mode,
                                              free,
                                              init_cnt,
-           input   logic [COUNTER_SIZE-1:0]  min,
-           input   logic [COUNTER_SIZE-1:0]  max,
-           input   logic [COUNTER_SIZE-1:0]  init,                      
-           output  logic [COUNTER_SIZE-1:0]  value,
-                   logic                     overflow_set
+           input    [COUNTER_SIZE-1:0]  min,
+           input    [COUNTER_SIZE-1:0]  max,
+           input    [COUNTER_SIZE-1:0]  init,                      
+           output   reg [COUNTER_SIZE-1:0]  value,
+           output                       overflow_set
        );
 
-logic overflow_up;
-logic overflow_dwn;
-logic up,down,down_p;
+
+wire up,down;
+wire overflow_up_set;
+wire overflow_down_set;
+
 
 assign up   = cnt_mode ==1;
 assign down = cnt_mode ==0;

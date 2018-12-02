@@ -20,46 +20,46 @@ localparam CNTR_ADDR=6'h04;
 localparam COUNTER_SIZE=8;
 localparam NUM_COMP=2;
 
-logic                     overflow_trg_en;
-logic                     out_match_1_trg_en;
-logic                     out_match_0_trg_en;
-logic                     overflow_int_en;
-logic                     out_match_1_int_en;
-logic                     out_match_0_int_en;
-logic                     clock_select;
-logic                     count_mode;
-logic                     start;
-logic [COUNTER_SIZE-1:0]  counter_value;
-logic                     counter_overflow;
+wire                     overflow_trg_en;
+wire                     out_match_1_trg_en;
+wire                     out_match_0_trg_en;
+wire                     overflow_int_en;
+wire                     out_match_1_int_en;
+wire                     out_match_0_int_en;
+wire                     clock_select;
+wire                     count_mode;
+wire                     start;
+wire [COUNTER_SIZE-1:0]  counter_value;
+wire                     counter_overflow;
 
-logic [COUNTER_SIZE-1:0]  match_1_value;
-logic [COUNTER_SIZE-1:0]  match_0_value;
+wire [COUNTER_SIZE-1:0]  match_1_value;
+wire [COUNTER_SIZE-1:0]  match_0_value;
 
-logic [COUNTER_SIZE-1:0]  count_min;
-logic [COUNTER_SIZE-1:0]  count_max;
-logic [COUNTER_SIZE-1:0]  count_init;
+wire [COUNTER_SIZE-1:0]  count_min;
+wire [COUNTER_SIZE-1:0]  count_max;
+wire [COUNTER_SIZE-1:0]  count_init;
 
-logic overflow_status_flag;
-logic cnt_match_0_status_flag;
-logic cnt_match_1_status_flag;
-logic cnt_match_0_status_flag_set;
-logic cnt_match_1_status_flag_set;
+wire overflow_status_flag;
+wire cnt_match_0_status_flag;
+wire cnt_match_1_status_flag;
+wire cnt_match_0_status_flag_set;
+wire cnt_match_1_status_flag_set;
 
 
-logic start_1;
-logic start_rise;
+reg start_1;
+wire start_rise;
   
 
-logic up_count;
-logic down_count;
-logic free_mode;
-logic clk_pulse;
-logic pwm_mode;
-logic edge_mode;
-logic inv;
-logic trigger_int;
-logic enable_operation;
-logic [2:0] prescaler;
+wire up_count;
+wire down_count;
+wire free_mode;
+wire clk_pulse;
+wire pwm_mode;
+wire edge_mode;
+wire inv;
+wire trigger_int;
+wire enable_operation;
+wire [2:0] prescaler;
 
   //decode
   assign  ext_clock_select = clock_select;

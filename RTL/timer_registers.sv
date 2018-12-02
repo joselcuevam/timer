@@ -4,40 +4,40 @@ module timer_registers(
            module_en,
            wr,
            
-           logic [7:0]  wdata,
-           logic [5:0]  addr,
-           output  logic [7:0]  rdata,
-           output logic overflow_int_en,
-           output logic out_match_0_int_en,
-           output logic out_match_1_int_en,
-           output logic clock_select,
-           output logic force_free,
-           output logic count_mode,
-           output logic [7:0] match_1_value,
-           output logic [7:0] match_0_value,
-           output logic       start,
-           output logic [2:0] prescaler,
+           input [7:0]  wdata,
+           input [5:0]  addr,
+           output   [7:0]  rdata,
+           output reg overflow_int_en,
+           output reg out_match_0_int_en,
+           output reg out_match_1_int_en,
+           output reg clock_select,
+           output reg force_free,
+           output reg count_mode,
+           output reg [7:0] match_1_value,
+           output reg [7:0] match_0_value,
+           output reg       start,
+           output reg [2:0] prescaler,
 
-           output logic overflow_trg_en,
-           output logic out_match_1_trg_en,
-           output logic out_match_0_trg_en,                   
+           output reg overflow_trg_en,
+           output reg out_match_1_trg_en,
+           output reg out_match_0_trg_en,                   
            
-           input  logic overflow,
-           input  logic match_0,
-           input  logic match_1,
+           input   overflow,
+           input   match_0,
+           input   match_1,
            
-           output logic overflow_status_flag,
-           output logic cnt_match_0_status_flag,
-           output logic cnt_match_1_status_flag,
+           output reg overflow_status_flag,
+           output reg cnt_match_0_status_flag,
+           output reg cnt_match_1_status_flag,
            
-           output logic [7:0] count_init,
-           output logic [7:0] count_min,
-           output logic [7:0] count_max,
+           output reg [7:0] count_init,
+           output reg [7:0] count_min,
+           output reg [7:0] count_max,
            
-           output logic       edge_mode,
-           output logic       pwm_mode,
-           output logic       cnt_init_wr,
-           output logic       inv         
+           output reg       edge_mode,
+           output reg       pwm_mode,
+           output reg       cnt_init_wr,
+           output reg       inv         
          
        );
        
@@ -76,13 +76,13 @@ wire cnt_match_0_sel  = (addr == CNT_REG_MATCH_0_ADDR);
 
 wire         wr_en;
 wire         rd_en;
-logic [7:0]  rdata_mux_out;
+reg  [7:0]  rdata_mux_out;
 
 assign wr_en = module_en &  wr;
 assign rd_en = module_en & ~wr;
 
 //register ctrl
-logic [7:0] ctrl_reg;
+wire  [7:0] ctrl_reg;
 assign ctrl_reg = {
            force_free,
            overflow_int_en,
@@ -155,7 +155,7 @@ end
 
 //register ctrl_in
 
-logic [7:0] ctrl_in_reg;
+wire [7:0] ctrl_in_reg;
 
 
 assign ctrl_in_reg = {
@@ -186,7 +186,7 @@ end
 
 //register ctrl_out
 
-logic [7:0] ctrl_out_reg;
+wire [7:0] ctrl_out_reg;
 
 
 assign ctrl_out_reg = {
@@ -243,7 +243,7 @@ end
 
 //register status
  
-logic [7:0] status_reg;
+wire  [7:0] status_reg;
 
 always @(posedge clk or posedge rst)
 begin
@@ -280,8 +280,6 @@ begin
             cnt_match_1_status_flag = 0;
             
 end
-
-
 
 assign status_reg = {5'b0,cnt_match_1_status_flag,cnt_match_0_status_flag,overflow_status_flag};
 
@@ -334,7 +332,7 @@ end
 //register count
 
 logic [7:0] counter;
-logic [7:0] counter_reg;
+wire [7:0] counter_reg;
 always @(posedge clk or posedge rst)
 begin
     if (rst)
@@ -358,7 +356,7 @@ assign counter_reg = counter;
 
 
 //register output match_0 value
-logic [7:0] cnt_match_0_reg;
+wire [7:0] cnt_match_0_reg;
 always @(posedge clk or posedge rst)
 begin
     if (rst)
@@ -369,7 +367,7 @@ begin
 end
 assign cnt_match_0_reg = match_0_value;
 //register output match_1 value
-logic [7:0] cnt_match_1_reg;
+wire [7:0] cnt_match_1_reg;
 always @(posedge clk or posedge rst)
 begin
     if (rst)
