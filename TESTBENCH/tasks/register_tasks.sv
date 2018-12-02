@@ -1,5 +1,5 @@
 
-task reg_write(reg [7:0] address,reg [7:0] data);
+task reg_write(input reg [7:0] address,input reg [7:0] data);
 begin
   $display("[%m] : Write A=h%02h W=h%02h T=%0d",address,data,$stime);
 @(posedge `TB_SCOPE.clk);
@@ -15,7 +15,7 @@ begin
 end
 endtask
 
-task reg_read(reg [7:0] address);
+task reg_read(input reg [7:0] address);
 begin
 @(posedge `TB_SCOPE.clk);
 `TB_SCOPE.address    = address;
@@ -31,7 +31,7 @@ end
 endtask
 
 
-task delay(reg [31:0] value);
+task delay(input reg [31:0] value);
 begin
   `SHOWM_VALUE (Wait clock cycles,value);
   repeat (value) @(posedge `TB_SCOPE.clk);

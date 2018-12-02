@@ -4,19 +4,19 @@
 module tb_counter();
   
   
-  logic [5:0]  address;
-  logic [7:0]  write_data;
-  logic [7:0]  read_data;
-  logic        module_en;
-  logic        write_en;
-  logic        rst;
+  reg [5:0]  address;
+  reg [7:0]  write_data;
+  wire [7:0]  read_data;
+  reg        module_en;
+  reg        write_en;
+  reg        rst;
   
-  logic        overflow_int;
-  logic        match0_int;  
-  logic        match1_int;
-  logic        timer_out;
-  logic        clk_ext;
-  logic        trigger;
+  wire        overflow_int;
+  wire        match0_int;  
+  wire        match1_int;
+  wire        timer_out;
+  wire        clk_ext;
+  wire        trigger;
   
   // Simulator control  
   initial
@@ -28,10 +28,10 @@ module tb_counter();
   end
   
   //tasks
-  `include "../TESTBENCH/tasks/register_tasks.sv"
-  `include "../TESTBENCH/tasks/common_tasks.sv"
+  `include "register_tasks.sv"
+  `include "common_tasks.sv"
   
-  logic [7:0] reg_read_data;
+  wire [7:0] reg_read_data;
 
   assign reg_read_data = `TB_SCOPE.read_data;
 

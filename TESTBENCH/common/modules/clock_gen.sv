@@ -1,5 +1,5 @@
 module clock_gen(
-  output logic out
+  output  out
   );
 
 
@@ -12,8 +12,8 @@ module clock_gen(
   
   parameter real    PERIOD   = 1;
   parameter integer CYCLE    = 50;
-  parameter reg     EN       = 1;
-  parameter reg     INIT_VAL = 0;
+  parameter      EN       = 1;
+  parameter      INIT_VAL = 0;
 
   initial
   begin
@@ -76,8 +76,8 @@ module clock_gen(
 endmodule
 
 module clock_div(
-  input  logic         in,
-  output logic [11:0]  out
+  input           in,
+  output reg [11:0]  out
   );
 
   initial
@@ -87,7 +87,7 @@ module clock_div(
 
   always @(posedge in)
   begin
-    out++;
+    out = out + 1'b1;
   end
 
 endmodule

@@ -60,7 +60,7 @@ case $1 in
     unlink $PROJ/TESTBENCH/vectorset/test.sv
     ln -s $PROJ/TESTBENCH/vectorset/$stim_name".sv" $PROJ/TESTBENCH/vectorset/test.sv
     echo "run simulation"
-    comando="irun -access +rw -f $caf_file -top tb_counter -input ../tool_data/simvision/run.tcl "
+    comando="irun -access +rw -incdir $PROJ/TESTBENCH/tasks -f $caf_file -top tb_counter -input ../tool_data/simvision/run.tcl "
     echo $comando
     eval $comando
   ;; 
