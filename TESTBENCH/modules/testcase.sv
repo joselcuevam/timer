@@ -21,7 +21,7 @@ startup_task();
 //`include "../TESTBENCH/vectorset/down_count_mode_trigger.sv"
 //`include "../TESTBENCH/vectorset/free_run_trigger.sv"
 
-`include "../TESTBENCH/vectorset/test.sv"
+`include "../vectorset/test.sv"
 
 `SHOWM(===========================);
 `SHOWM(End simulation);
