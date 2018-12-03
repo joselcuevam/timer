@@ -15,3 +15,4 @@ cd iverilog/
 ./configure
 sudo make
 sudo make install
+##done
