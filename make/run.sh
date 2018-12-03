@@ -10,18 +10,20 @@ TIMER_CONF="$HOME/.timer_conf"
 PROJ="$HOME/timer_test/timer"
 VVP_LIB="$HOME/apps/lib/ivl"
 
-# initialize vars
-
-caf_file="$PROJ/work/caf"
-caf_file_iverilog="$PROJ/work/caf_iverilog"
-
 stim_name="free_run"
 
 if [ -f $TIMER_CONF ]; then
   source $TIMER_CONF
+  echo "sourced configuration file"
+  echo "\$PROJ:$PROJ"
 else
   echo "missing configuration file $TIMER_CONF"  
 fi
+
+# initialize vars
+
+caf_file="$PROJ/work/caf"
+caf_file_iverilog="$PROJ/work/caf_iverilog"
   
 
 ##############################################################
