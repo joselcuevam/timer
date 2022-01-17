@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
-##
+##############################################################
+#
+# Comments:
+#
+# on erros like ./run.sh: line 1: $'\r': command not found
+# use dos2unix run.sh for fix
+#
+##############################################################
+
 echo " Initialize "
 ##
 TIMER_CONF="$HOME/.timer_conf"
 ##############################################################
-
 #set environmente vars
-
-PROJ="$HOME/timer_test/timer"
+PROJ="$HOME/timer"
 VVP_LIB="$HOME/apps/lib/ivl"
 
 stim_name="free_run"
@@ -68,9 +74,9 @@ case $1 in
     unlink $PROJ/TESTBENCH/vectorset/test.sv
     ln -s $PROJ/TESTBENCH/vectorset/$stim_name".sv" $PROJ/TESTBENCH/vectorset/test.sv
     echo "run simulation"
-    comando="irun -access +rw -incdir $PROJ/TESTBENCH/tasks -f $caf_file -top tb_counter -input ../tool_data/simvision/run.tcl "
-    echo $comando
-    eval $comando
+    command="irun -access +rw -incdir $PROJ/TESTBENCH/tasks -f $caf_file -top tb_counter -input ../tool_data/simvision/run.tcl "
+    echo $command
+    eval $command
   ;;
 "-ri")
     stim_name=$2
@@ -78,16 +84,16 @@ case $1 in
     unlink $PROJ/TESTBENCH/vectorset/test.sv
     ln -s $PROJ/TESTBENCH/vectorset/$stim_name".sv" $PROJ/TESTBENCH/vectorset/test.sv
     echo "run simulation"
-    comando="iverilog -c $caf_file_iverilog -o timer.vvp;vvp -M $VVP_LIB timer.vvp"
-    echo $comando
-    eval $comando
+    command="iverilog -c $caf_file_iverilog -o timer.vvp;vvp -M $VVP_LIB timer.vvp"
+    echo $command
+    eval $command
   ;;   
    
 "-w")
     echo "open simulation waveform"
-    comando="simvision $PROJ/work/timer.shm -input $PROJ/tool_data/simvision/simvision.svcf"
-    echo $comando
-    eval $comando
+    command="simvision $PROJ/work/timer.shm -input $PROJ/tool_data/simvision/simvision.svcf"
+    echo $command
+    eval $command
   ;; 
 "-n")
     echo "open files"
