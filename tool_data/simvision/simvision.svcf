@@ -4,8 +4,6 @@
 #
 # You can restore this configuration with:
 #
-#     simvision -input /home/nxf29921/timer_test/timer/tool_data/simvision/simvision.svcf
-#  or simvision -input /home/nxf29921/timer_test/timer/tool_data/simvision/simvision.svcf database1 database2 ...
 #
 
 
@@ -198,7 +196,7 @@ preferences set toolbar-Standard-WaveWindow {
 array set dbNames ""
 set dbNames(realName1) [ database require timer -ask yes -hints {
 	file ./timer.shm/timer.trn
-	file /home/nxf29921/timer_test/timer/work/timer.shm/timer.trn
+	file $::env(HOME)/timer/work/timer.shm/timer.trn
 }]
 if {$dbNames(realName1) == ""} {
     set dbNames(realName1) timer
@@ -336,7 +334,7 @@ srcbrowser set \
     -showcallstack 0 \
     -displayvalues 1
 
-srcbrowser show -scope tb_counter.d_ip_timer.input_block -file /home/nxf29921/timer_test/timer/RTL/input_block.sv -line 1
+srcbrowser show -scope tb_counter.d_ip_timer.input_block -file $::env(HOME)/timer/RTL/input_block.sv -line 1
 
 srcbrowser sidebar visibility partial
 
