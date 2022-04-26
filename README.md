@@ -23,3 +23,5 @@ Module registers:
 - 0xB	CNT	Actual counter value
 - 0xC	CNT_M1	Counter match value 0
 - 0xD	CNT_M2	Counter match value 1
+
+#Test updating 
