@@ -24,4 +24,16 @@ Module registers:
 - 0xC	CNT_M1	Counter match value 0
 - 0xD	CNT_M2	Counter match value 1
 
-#Test updating 
+#Set up
+
+Clone at $HOME/timer otherwise create a config file: $HOME/.timer_conf
+Put in that file the location of timer folder example PROJ=/path/to/timer
+
+
+#Simulate
+
+Compile, simulate, open waveform
+
+./run.sh -c
+./run.sh -r free_run
+./run.sh -w free_run

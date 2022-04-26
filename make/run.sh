@@ -30,7 +30,7 @@ fi
 
 caf_file="$PROJ/work/caf"
 caf_file_iverilog="$PROJ/work/caf_iverilog"
-  
+
 
 ##############################################################
 
@@ -59,7 +59,7 @@ case $1 in
     echo "..goto work folder"
     cd   $PROJ
     echo "..get rtl & testbench files"
-    find `pwd` -type f -name '*.sv' |grep -v vectorset|grep -v tasks|sort> $caf_file
+    find -L `pwd` -type f -name '*.sv' |grep -v vectorset|grep -v tasks|sort> $caf_file
     cd   -
     echo "caf file content:"
     cat  $caf_file
@@ -116,6 +116,5 @@ echo $Message
 for var in "$@"
 do
  action $var $2
- 
 done
 
